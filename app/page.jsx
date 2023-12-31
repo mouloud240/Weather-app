@@ -13,6 +13,8 @@ const Home =()=>{
     const[firstclick,setfirstslick]=useState(false)
   const [InputValue,SetInputValue]=useState("")
   const[fetchdata,setfetchdata]=useState(false)
+  const [placeholder,setplaceholder]=useState('Search for a city ...')
+  const [event,setevent]=useState(false)
   const [days, setdays] = useState([
     { icon: "", Temp: "", Day: "" },
     { icon: "", Temp: "", Day: "" },
@@ -27,6 +29,8 @@ const Home =()=>{
       setfetchdata(true)
       e.preventDefault()
       SetInputValue(Searchfirst.current.value)
+      setevent(!event)
+
      }
   }
   const handlekeypress=(e)=>{
@@ -38,12 +42,9 @@ const Home =()=>{
       Search.current.value = ""
     }
   }
-  
- 
    const Api_url=`https://api.openweathermap.org/data/2.5/forecast?q=${InputValue}&APPID=6359d484b1811ba80ef01e33a7c9bb9b&lang=en`
    useEffect(()=>{
-      
-    try {
+    
       if (fetchdata){
         axios.get(Api_url).then((res)=>{
           let copyinfo={...info}
@@ -63,27 +64,19 @@ const Home =()=>{
             };
             cpt++;
           }
-  
+          setplaceholder('Search for a city ...')
           setdays(copydays);
+        }
+        
+        ).catch((err)=>{  setfirstslick(false);
+          setplaceholder('Please Enter a Valid city name');
+          if (!days[1].icon){setfirstslick(false)}
         })
         
-      }
- 
-     
-      
-    }catch(error){
-      console.log("the error"+error.message)
-      Searchfirst.current.value="There is no city with this name ..";
-      if (error.isAxiosError && error.response && error.response.status === 404) {
-        Searchfirst.current.placeholder = "City not found. Please try another.";
-      } else {
-        Searchfirst.current.placeholder = "An error occurred. Please try again.";
-      }
+        
+      } 
   
-     
-      setfirstslick(false)
-    }
-    },[InputValue])
+    },[InputValue,event])
     
 
   return (
@@ -95,7 +88,7 @@ const Home =()=>{
         Weather forecast
       </h1>
          <div className='flex justify-center'>
-           <input className="placeholder:italic placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-xl py-2 pl-9 pr-3 shadow-lg focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder="Search for a City..." type="text" name="search"  onKeyDown={handlekeyfirstpress} ref={Searchfirst}/>        
+           <input className="placeholder:italic placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-xl py-2 pl-9 pr-3 shadow-lg focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder={placeholder} type="text" name="search"  onKeyDown={handlekeyfirstpress} ref={Searchfirst}/>        
       </div>
       </div>
 
@@ -109,7 +102,7 @@ const Home =()=>{
         </h1>
       <div className='flex justify-center px-10 mx-[30vw] mt-10 h-10  '>
            
-           <input className="placeholder:italic placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-xl py-2 pl-9 pr-3 shadow-lg focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder="Search for a City..." type="text" name="search"  onKeyDown={handlekeypress} ref={Search}/>        
+           <input className="placeholder:italic placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-xl py-2 pl-9 pr-3 shadow-lg focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder={placeholder} type="text" name="search"  onKeyDown={handlekeypress} ref={Search}/>        
       </div>
       <div className=' grid justify-center  m-14 mt-10 p-5'>
   
