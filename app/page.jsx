@@ -9,7 +9,10 @@ const Home =()=>{
   const [info,setinfo]=useState({
     icon:"",
     Temp:"",
-    description:"" })
+    description:"" ,
+  city_name:""
+  })
+    
     const[firstclick,setfirstslick]=useState(false)
   const [InputValue,SetInputValue]=useState("")
   const[fetchdata,setfetchdata]=useState(false)
@@ -51,6 +54,7 @@ const Home =()=>{
           copyinfo.description=res.data.list[0].weather[0].description
           copyinfo.icon=res.data.list[0].weather[0].icon
           copyinfo.Temp=Math.floor(res.data.list[0].main.temp-272.15)
+          copyinfo.city_name=res.data.city.name
           setinfo(copyinfo) 
           var copydays = [];
 
@@ -111,7 +115,7 @@ const Home =()=>{
           logo={info.icon}
           />
           <Info
-          city={InputValue}
+          city={info.city_name}
           main={info.description}
           temperature={info.Temp}
           />
