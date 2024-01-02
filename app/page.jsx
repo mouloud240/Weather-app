@@ -24,6 +24,7 @@ const Home =()=>{
     { icon: "", Temp: "", Day: "" },
     { icon: "", Temp: "", Day: "" },
   ]);
+  const [wrong,Setwrong]=useState(false);
   let Searchfirst=useRef(null)
   let Search=useRef(null)
   const handlekeyfirstpress =(e)=>{
@@ -74,25 +75,30 @@ const Home =()=>{
         
         ).catch((err)=>{  setfirstslick(false);
           setplaceholder('Please Enter a Valid city name');
+          Setwrong(true)
           if (!days[1].icon){setfirstslick(false)}
         })
         
         
       } 
+      Setwrong(false)
   
     },[InputValue,event])
-    
+      
+
+    let border=wrong?"border-red-500":''
+    let txtcolor=wrong?"text-red-500":'text-slate-400'
 
   return (
     
 <div className='bg-[url(/images/background.jpg)] w-full h-[100vh] p-0 m-0'>
-  { !firstclick&&  <main className='flex justify-center h-full items-center'>
+  { !firstclick&&  <main className='flex justify-center h-full items-center max-sm:p-10'>
      <div className=' bg-white bg-opacity-55 rounded-3xl p-40 flex flex-col gap-10'>
       <h1 className='font-bold text-5xl text-black'>
         Weather forecast
       </h1>
-         <div className='flex justify-center'>
-           <input className="placeholder:italic placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-xl py-2 pl-9 pr-3 shadow-lg focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder={placeholder} type="text" name="search"  onKeyDown={handlekeyfirstpress} ref={Searchfirst}/>        
+         <div className={`flex justify-center `}>
+           <input className={`placeholder:italic placeholder:${txtcolor}  block bg-white w-full border ${border} border-slate-300 rounded-xl py-2 pl-9 pr-3 shadow-lg focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm`} placeholder={placeholder} type="text" name="search"  onKeyDown={handlekeyfirstpress} ref={Searchfirst}/>        
       </div>
       </div>
 
@@ -101,16 +107,16 @@ const Home =()=>{
 
       {firstclick&&<main>
        
-        <h1 className='font-bold text-5xl flex justify-center p-4'>
+        <h1 className='font-bold text-5xl flex justify-center p-4 max-sm:text-2xl max-sm:p-8'>
           Weather app
         </h1>
-      <div className='flex justify-center px-10 mx-[30vw] mt-10 h-10  '>
+      <div className='flex justify-center px-10 mx-[30vw] mt-10 h-10 max-sm:h-5 max-sm:mt-5 max-sm:px-5 '>
            
            <input className="placeholder:italic placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-xl py-2 pl-9 pr-3 shadow-lg focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder={placeholder} type="text" name="search"  onKeyDown={handlekeypress} ref={Search}/>        
       </div>
-      <div className=' grid justify-center  m-14 mt-10 p-5'>
+      <div className=' grid justify-center  m-14 mt-10 p-5 max-sm:p-10 max-sm:mt-7 max-sm:m-10'>
   
-      <div className='flex justify-start gap-10  bg-white bg-opacity-55 rounded-3xl  p-16  '>
+      <div className='flex justify-start gap-10  bg-white bg-opacity-55 rounded-3xl  p-16 max-sm:p-20 max-sm:gap-8 '>
           <Logo
           logo={info.icon}
           />
