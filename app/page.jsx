@@ -4,27 +4,22 @@ import Image from 'next/image';
 import { useEffect, useState,useRef } from 'react';
 import Info from './Components/Info';
 import Days from './Components/Days';
-import Logo from './Components/Logo';
+import Logo from   './Components/Logo';
 const Home =()=>{
+  const APIKey=process.env.NEXT_PUBLIC_API_KEY
   const [info,setinfo]=useState({
     icon:"",
     Temp:"",
-    description:"" ,
-  city_name:""
-  })
-    
+    description:"" })
     const[firstclick,setfirstslick]=useState(false)
   const [InputValue,SetInputValue]=useState("")
   const[fetchdata,setfetchdata]=useState(false)
-  const [placeholder,setplaceholder]=useState('Search for a city ...')
-  const [event,setevent]=useState(false)
   const [days, setdays] = useState([
     { icon: "", Temp: "", Day: "" },
     { icon: "", Temp: "", Day: "" },
     { icon: "", Temp: "", Day: "" },
     { icon: "", Temp: "", Day: "" },
   ]);
-  const [wrong,Setwrong]=useState(false);
   let Searchfirst=useRef(null)
   let Search=useRef(null)
   const handlekeyfirstpress =(e)=>{
@@ -33,8 +28,6 @@ const Home =()=>{
       setfetchdata(true)
       e.preventDefault()
       SetInputValue(Searchfirst.current.value)
-      setevent(!event)
-
      }
   }
   const handlekeypress=(e)=>{
@@ -46,18 +39,23 @@ const Home =()=>{
       Search.current.value = ""
     }
   }
-   const Api_url=`https://api.openweathermap.org/data/2.5/forecast?q=${InputValue}&APPID=6359d484b1811ba80ef01e33a7c9bb9b&lang=en`
+  
+ 
+   const Api_url=`https://api.openweathermap.org/data/2.5/forecast?q=${InputValue}&APPID=${APIKey}&lang=en`
    useEffect(()=>{
-    
-      if (fetchdata){
+      
+    try {
+      if (
+        fetchdata){
+        console.log(Api_url)
         axios.get(Api_url).then((res)=>{
           let copyinfo={...info}
           copyinfo.description=res.data.list[0].weather[0].description
           copyinfo.icon=res.data.list[0].weather[0].icon
           copyinfo.Temp=Math.floor(res.data.list[0].main.temp-272.15)
-          copyinfo.city_name=res.data.city.name
           setinfo(copyinfo) 
           var copydays = [];
+
 
           let cpt = 0;
           for (let i = 1; i < 30; i += 7) {
@@ -69,36 +67,39 @@ const Home =()=>{
             };
             cpt++;
           }
-          setplaceholder('Search for a city ...')
+  
           setdays(copydays);
-        }
-        
-        ).catch((err)=>{  setfirstslick(false);
-          setplaceholder('Please Enter a Valid city name');
-          Setwrong(true)
-          if (!days[1].icon){setfirstslick(false)}
         })
         
-        
-      } 
-      Setwrong(false)
-  
-    },[InputValue,event])
+      }
+ 
+     
       
-
-    let border=wrong?"border-red-500":''
-    let txtcolor=wrong?"text-red-500":'text-slate-400'
+    }catch(error){
+      console.log("the error"+error.message)
+      Searchfirst.current.value="There is no city with this name ..";
+      if (error.isAxiosError && error.response && error.response.status === 404) {
+        Searchfirst.current.placeholder = "City not found. Please try another.";
+      } else {
+        Searchfirst.current.placeholder = "An error occurred. Please try again.";
+      }
+  
+     
+      setfirstslick(false)
+    }
+    },[InputValue])
+    
 
   return (
     
 <div className='bg-[url(/images/background.jpg)] w-full h-[100vh] p-0 m-0'>
-  { !firstclick&&  <main className='flex justify-center h-full items-center max-sm:p-10'>
+  { !firstclick&&  <main className='flex justify-center h-full items-center'>
      <div className=' bg-white bg-opacity-55 rounded-3xl p-40 flex flex-col gap-10'>
       <h1 className='font-bold text-5xl text-black'>
-        Weather forecast
+        Weather forecast 
       </h1>
-         <div className={`flex justify-center `}>
-           <input className={`placeholder:italic placeholder:${txtcolor}  block bg-white w-full border ${border} border-slate-300 rounded-xl py-2 pl-9 pr-3 shadow-lg focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm`} placeholder={placeholder} type="text" name="search"  onKeyDown={handlekeyfirstpress} ref={Searchfirst}/>        
+         <div className='flex justify-center'>
+           <input className="placeholder:italic placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-xl py-2 pl-9 pr-3 shadow-lg focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder="Search for a City..." type="text" name="search"  onKeyDown={handlekeyfirstpress} ref={Searchfirst}/>        
       </div>
       </div>
 
@@ -107,21 +108,21 @@ const Home =()=>{
 
       {firstclick&&<main>
        
-        <h1 className='font-bold text-5xl flex justify-center p-4 max-sm:text-2xl max-sm:p-8'>
+        <h1 className='font-bold text-5xl flex justify-center p-4'>
           Weather app
         </h1>
-      <div className='flex justify-center px-10 mx-[30vw] mt-10 h-10 max-sm:h-5 max-sm:mt-5 max-sm:px-5 '>
+      <div className='flex justify-center px-10 mx-[30vw] mt-10 h-10  '>
            
-           <input className="placeholder:italic placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-xl py-2 pl-9 pr-3 shadow-lg focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder={placeholder} type="text" name="search"  onKeyDown={handlekeypress} ref={Search}/>        
+           <input className="placeholder:italic placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-xl py-2 pl-9 pr-3 shadow-lg focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder="Search for a City..." type="text" name="search"  onKeyDown={handlekeypress} ref={Search}/>        
       </div>
-      <div className=' grid justify-center  m-14 mt-10 p-5 max-sm:p-10 max-sm:mt-7 max-sm:m-10'>
+      <div className=' grid justify-center  m-14 mt-10 p-5'>
   
-      <div className='flex justify-start gap-10  bg-white bg-opacity-55 rounded-3xl  p-16 max-sm:p-20 max-sm:gap-8 '>
+      <div className='flex justify-start gap-10  bg-white bg-opacity-55 rounded-3xl  p-16  '>
           <Logo
           logo={info.icon}
           />
           <Info
-          city={info.city_name}
+          city={InputValue}
           main={info.description}
           temperature={info.Temp}
           />
