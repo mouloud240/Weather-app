@@ -7,8 +7,7 @@ import Days from './Components/Days';
 import Logo from   './Components/Logo';
 const Home =()=>{
   const APIKey=process.env.NEXT_PUBLIC_API_KEY
-  //added with ubuntu test
-  const [info,setinfo]=useState({
+    const [info,setinfo]=useState({
     icon:"",
     Temp:"",
     description:"" })
